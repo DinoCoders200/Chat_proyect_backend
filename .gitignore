@@ -1,0 +1,83 @@
+## Visual Studio Build Outputs
+## ----------------------------
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Re]leasePublic/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+## .NET Core / .NET 5+ / .NET 8+ Outputs
+## -------------------------------------
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## Visual Studio User Settings and Cache
+## -------------------------------------
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+
+## Rider / JetBrains IDEs
+## ----------------------
+.idea/
+*.sln.iml
+
+## Visual Studio Code
+## ------------------
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+## User-specific files and Secrets
+## -------------------------------
+*.suo
+*.ntvs*
+*.njsproj
+*.sln.swr
+*.userprefs
+appsettings.Development.json
+appsettings.Local.json
+
+## Secrets Manager
+## ---------------
+secrets.json
+
+## NuGet Packages
+## --------------
+*.nupkg
+# Excluye la carpeta global de paquetes si se restaura localmente
+**/packages/*
+# Excepto los archivos de configuración de NuGet
+!**/packages/repositories.config
+project.assets.json
+nuget.config
+
+## Publish output
+## --------------
+*publish/
+
+## Testing Outputs
+## ---------------
+*.tlh
+*.tli
+*.log
+*.ttcl
+BenchmarkDotNet.Artifacts/
+TestResults/
+
+## OS-specific files
+## -----------------
+.DS_Store
+Thumbs.db
