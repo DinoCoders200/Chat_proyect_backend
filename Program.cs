@@ -4,20 +4,16 @@ using Scalar.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenAnyIP(int.Parse(port));
-});
+builder.Configuration["ASPNETCORE_HTTP_PORTS"] = port;
 
 builder.Services.AddHealthChecks(); 
-
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddFastEndpoints();
 
 var app = builder.Build();
 
-app.MapHealthChecks("/health"); 
+app.MapHealthChecks("/healthz"); 
 
 app.MapOpenApi();            
 app.MapScalarApiReference();

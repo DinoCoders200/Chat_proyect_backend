@@ -1,8 +1,6 @@
 ﻿# Etapa 1: Base de ejecución (Runtime ligera)
-# NOTA: Si usas .NET 8 o 9, cambia el "10.0" por "8.0" o "9.0" según corresponda.
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 WORKDIR /app
-# Un solo EXPOSE. Cloud Run requiere estrictamente el 8080 por defecto.
 EXPOSE 8080
 
 # Etapa 2: Compilación (Build)
@@ -10,12 +8,14 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# 1. Copiar y restaurar primero (aprovecha el caché de capas de Docker)
+# 1. Copiar el archivo del proyecto y restaurar dependencias
 COPY ["custom-chat-backend.csproj", "./"]
 RUN dotnet restore "custom-chat-backend.csproj"
 
-# 2. Copiar el resto del código y compilar
+# 2. Copiar absolutamente todo el resto del código (Api, Core, Infrastructure, etc.)
 COPY . .
+
+# 3. Compilar el proyecto principal
 RUN dotnet build "custom-chat-backend.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # Etapa 3: Publicación (Publish)
@@ -28,7 +28,9 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-# Obligamos a ASP.NET Core a escuchar en el puerto correcto usando variables de entorno nativas
-ENV ASPNETCORE_URLS=http://+:8080
+# 🛠️ VARIABLES DE ENTORNO NATIVAS Y BLINDADAS PARA CLOUD RUN
+ENV ASPNETCORE_URLS=http://0.0.0.0:8080
+ENV ASPNETCORE_HTTP_PORTS=8080
+ENV ASPNETCORE_ENVIRONMENT=Production
 
 ENTRYPOINT ["dotnet", "custom-chat-backend.dll"]
