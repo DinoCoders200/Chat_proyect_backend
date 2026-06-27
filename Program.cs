@@ -12,10 +12,9 @@ var app = builder.Build();
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 
 app.MapOpenApi();            
-app.MapScalarApiReference();  
+app.MapScalarApiReference();
+app.UseHttpsRedirection(); 
 
-
-app.UseHttpsRedirection();
 app.UseAuthorization(); 
 app.UseFastEndpoints(config =>
 {
