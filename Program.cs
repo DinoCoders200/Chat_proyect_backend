@@ -29,4 +29,6 @@ app.UseFastEndpoints(config =>
     config.Errors.UseProblemDetails(); 
 });
 
+app.MapGet("/", () => Results.Redirect("/scalar", permanent: true));
+
 app.Run();
