@@ -1,8 +1,15 @@
+using custom_chat_backend.Infrastructure.Persistence.Context;
 using FastEndpoints;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(connectionString));
+
+builder.Services.AddHttpContextAccessor();
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 builder.Configuration["ASPNETCORE_HTTP_PORTS"] = port;
 
