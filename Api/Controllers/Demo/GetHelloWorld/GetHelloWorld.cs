@@ -18,12 +18,11 @@ public class GetHelloWorld
     {
         Result<GetHelloWorldResponse> result = await FakeServiceGetHello(req);
 
-        await this.SendArdalisResultAsync(result, ct);
+        await this.SendArdalisResultAsync(result,x=>x.Response, ct);
     }
 
     private async Task<Result<GetHelloWorldResponse>> FakeServiceGetHello(GetHelloWorldRequest req)
     {
-
         var response = new GetHelloWorldResponse("Hello World");
         return Result.Success(response);
     }

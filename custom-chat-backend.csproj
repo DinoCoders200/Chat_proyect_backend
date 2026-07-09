@@ -10,8 +10,11 @@
 
     <ItemGroup>
         <PackageReference Include="Ardalis.Result" Version="10.1.0" />
+        <PackageReference Include="Ardalis.Specification" Version="9.3.1" />
+        <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" Version="9.3.1" />
         <PackageReference Include="FastEndpoints" Version="8.1.0" />
         <PackageReference Include="FastEndpoints.Swagger" Version="8.1.0" />
+        <PackageReference Include="MediatR" Version="14.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.9" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.9">
@@ -29,13 +32,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Api\Middlewares\" />
       <Folder Include="Api\Services\" />
       <Folder Include="Core\Application\Common\" />
       <Folder Include="Core\Application\Features\" />
+      <Folder Include="Core\Application\UseCases\User\Commands\" />
       <Folder Include="Core\Domain\Common\" />
       <Folder Include="Core\Domain\Enums\" />
-      <Folder Include="Core\DTOs\" />
       <Folder Include="Infrastructure\Identity\" />
       <Folder Include="Infrastructure\Persistence\Migrations\" />
       <Folder Include="Infrastructure\Services\" />
