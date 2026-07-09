@@ -200,3 +200,11 @@
 /Users/leonelchauca/RiderProjects/custom-chat-backend/bin/Debug/net10.0/tr/Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 /Users/leonelchauca/RiderProjects/custom-chat-backend/bin/Debug/net10.0/zh-Hans/Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 /Users/leonelchauca/RiderProjects/custom-chat-backend/bin/Debug/net10.0/zh-Hant/Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
+/Users/leonelchauca/RiderProjects/custom-chat-backend/bin/Debug/net10.0/Ardalis.Specification.dll
+/Users/leonelchauca/RiderProjects/custom-chat-backend/bin/Debug/net10.0/MediatR.dll
+/Users/leonelchauca/RiderProjects/custom-chat-backend/bin/Debug/net10.0/MediatR.Contracts.dll
+/Users/leonelchauca/RiderProjects/custom-chat-backend/bin/Debug/net10.0/Microsoft.IdentityModel.Abstractions.dll
+/Users/leonelchauca/RiderProjects/custom-chat-backend/bin/Debug/net10.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/Users/leonelchauca/RiderProjects/custom-chat-backend/bin/Debug/net10.0/Microsoft.IdentityModel.Logging.dll
+/Users/leonelchauca/RiderProjects/custom-chat-backend/bin/Debug/net10.0/Microsoft.IdentityModel.Tokens.dll
+/Users/leonelchauca/RiderProjects/custom-chat-backend/bin/Debug/net10.0/Ardalis.Specification.EntityFrameworkCore.dll

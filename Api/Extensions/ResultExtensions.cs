@@ -5,17 +5,19 @@ namespace custom_chat_backend.Api.Extensions;
 
 public static class ResultExtensions
 {
-    public static async Task SendArdalisResultAsync<TResponse>(
-        this IEndpoint endpoint, 
-        Result<TResponse> result, 
-        CancellationToken ct = default) where TResponse : notnull
+    public static async Task SendArdalisResultAsync<TOutput, TResponse>(
+        this BaseEndpoint endpoint, 
+        Result<TOutput> result, 
+        Func<TOutput, TResponse> mapSuccess, 
+        CancellationToken ct = default) 
+        where TResponse : notnull
     {
         var httpContext = endpoint.HttpContext;
-        var response = httpContext.Response;
 
         if (result.IsSuccess)
         {
-            await response.SendAsync(result.Value!, StatusCodes.Status200OK, cancellation: ct);
+            var responseBody = mapSuccess(result.Value);
+            await httpContext.Response.SendAsync(responseBody, StatusCodes.Status200OK, cancellation: ct);
             return;
         }
 
@@ -36,7 +38,7 @@ public static class ResultExtensions
                 endpoint.ValidationFailures.Add(new(error.Identifier, error.ErrorMessage));
             }
             
-            await response.SendErrorsAsync(endpoint.ValidationFailures, statusCode, cancellation: ct);
+            await httpContext.Response.SendErrorsAsync(endpoint.ValidationFailures, statusCode, cancellation: ct);
             return;
         }
 
@@ -49,9 +51,11 @@ public static class ResultExtensions
             title, 
             statusCode)
         {
-            Instance = httpContext.Request.Path
+            Instance = httpContext.Request.Path,
+            Detail = detail 
         };
-        await response.SendAsync(problem, statusCode, cancellation: ct);
+        
+        await httpContext.Response.SendAsync(problem, statusCode, cancellation: ct);
     }
 
     private static string GetTitleForStatus(ResultStatus status) => status switch
