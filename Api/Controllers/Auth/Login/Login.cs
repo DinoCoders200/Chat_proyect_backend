@@ -24,7 +24,7 @@ public class Login
         // Simula la autenticación del usuario sin consultar una base de datos.
         Result<LoginResponse> result = await FakeLogin(req);
 
-        await this.SendArdalisResultAsync(result, ct);
+        await this.SendArdalisResultAsync(result,x=>x, ct);
     }
 
     // Simulación de autenticación (Mockeado)
