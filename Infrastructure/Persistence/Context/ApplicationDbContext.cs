@@ -1,6 +1,9 @@
 using System.Reflection;
 using System.Security.Claims;
 using custom_chat_backend.Core.Domain.Entities.Common;
+using custom_chat_backend.Core.Domain.Entities.LoginLog;
+using custom_chat_backend.Core.Domain.Entities.OAuthAccount;
+using custom_chat_backend.Core.Domain.Entities.Person;
 using custom_chat_backend.Core.Domain.Entities.User;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +21,9 @@ public class ApplicationDbContext: DbContext
     }
     
     public DbSet<UserEntity> Users => Set<UserEntity>();
+    public DbSet<PersonEntity> People => Set<PersonEntity>();
+    public DbSet<OAuthAccountEntity> OAuthAccounts => Set<OAuthAccountEntity>();
+    public DbSet<LoginLogEntity> LoginLogs => Set<LoginLogEntity>();
     
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -36,6 +42,15 @@ public class ApplicationDbContext: DbContext
                 builder.Entity(entityType.ClrType)
                     .Property(nameof(ICreatableEntity.CreatedBy))
                     .IsRequired(false);
+
+                // created_by is a FK to Users on every table. Restrict, not Cascade:
+                // deleting a user must never delete the rows they happened to create, and
+                // Postgres rejects the multiple cascade paths this would otherwise create.
+                builder.Entity(entityType.ClrType)
+                    .HasOne(typeof(UserEntity))
+                    .WithMany()
+                    .HasForeignKey(nameof(ICreatableEntity.CreatedBy))
+                    .OnDelete(DeleteBehavior.Restrict);
             }
 
             if (typeof(IAuditableEntity).IsAssignableFrom(entityType.ClrType))
@@ -48,6 +63,12 @@ public class ApplicationDbContext: DbContext
                 builder.Entity(entityType.ClrType)
                     .Property(nameof(IAuditableEntity.UpdatedBy))
                     .IsRequired(false);
+
+                builder.Entity(entityType.ClrType)
+                    .HasOne(typeof(UserEntity))
+                    .WithMany()
+                    .HasForeignKey(nameof(IAuditableEntity.UpdatedBy))
+                    .OnDelete(DeleteBehavior.Restrict);
             }
 
             if (typeof(ISoftDeletable).IsAssignableFrom(entityType.ClrType))
