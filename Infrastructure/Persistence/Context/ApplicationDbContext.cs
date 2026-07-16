@@ -5,9 +5,13 @@ using custom_chat_backend.Core.Domain.Entities.Common;
 using custom_chat_backend.Core.Domain.Entities.LoginLog;
 using custom_chat_backend.Core.Domain.Entities.Message;
 using custom_chat_backend.Core.Domain.Entities.OAuthAccount;
+using custom_chat_backend.Core.Domain.Entities.Permission;
 using custom_chat_backend.Core.Domain.Entities.Person;
 using custom_chat_backend.Core.Domain.Entities.Server;
+using custom_chat_backend.Core.Domain.Entities.ServerMember;
+using custom_chat_backend.Core.Domain.Entities.ServerRole;
 using custom_chat_backend.Core.Domain.Entities.User;
+using custom_chat_backend.Core.Domain.Entities.UserRole;
 using Microsoft.EntityFrameworkCore;
 
 namespace custom_chat_backend.Infrastructure.Persistence.Context;
@@ -30,6 +34,10 @@ public class ApplicationDbContext: DbContext
     public DbSet<ServerEntity> Servers => Set<ServerEntity>();
     public DbSet<ChannelEntity> Channels => Set<ChannelEntity>();
     public DbSet<MessageEntity> Messages => Set<MessageEntity>();
+    public DbSet<ServerMemberEntity> ServerMembers => Set<ServerMemberEntity>();
+    public DbSet<ServerRoleEntity> ServerRoles => Set<ServerRoleEntity>();
+    public DbSet<UserRoleEntity> UserRoles => Set<UserRoleEntity>();
+    public DbSet<PermissionEntity> Permissions => Set<PermissionEntity>();
     
     protected override void OnModelCreating(ModelBuilder builder)
     {
