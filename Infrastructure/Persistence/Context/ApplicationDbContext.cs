@@ -1,9 +1,12 @@
 using System.Reflection;
 using System.Security.Claims;
+using custom_chat_backend.Core.Domain.Entities.Channel;
 using custom_chat_backend.Core.Domain.Entities.Common;
 using custom_chat_backend.Core.Domain.Entities.LoginLog;
+using custom_chat_backend.Core.Domain.Entities.Message;
 using custom_chat_backend.Core.Domain.Entities.OAuthAccount;
 using custom_chat_backend.Core.Domain.Entities.Person;
+using custom_chat_backend.Core.Domain.Entities.Server;
 using custom_chat_backend.Core.Domain.Entities.User;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +27,9 @@ public class ApplicationDbContext: DbContext
     public DbSet<PersonEntity> People => Set<PersonEntity>();
     public DbSet<OAuthAccountEntity> OAuthAccounts => Set<OAuthAccountEntity>();
     public DbSet<LoginLogEntity> LoginLogs => Set<LoginLogEntity>();
+    public DbSet<ServerEntity> Servers => Set<ServerEntity>();
+    public DbSet<ChannelEntity> Channels => Set<ChannelEntity>();
+    public DbSet<MessageEntity> Messages => Set<MessageEntity>();
     
     protected override void OnModelCreating(ModelBuilder builder)
     {
