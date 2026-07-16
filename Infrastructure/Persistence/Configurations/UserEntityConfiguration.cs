@@ -1,4 +1,5 @@
 using custom_chat_backend.Core.Domain.Entities.User;
+using custom_chat_backend.Core.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -37,12 +38,14 @@ public class UserEntityConfiguration:IEntityTypeConfiguration<UserEntity>
         builder.Property(u => u.Status)
             .IsRequired()
             .HasConversion<string>()
-            .HasMaxLength(20);
+            .HasMaxLength(20)
+            .HasDefaultValue(UserStatus.Active);
 
         builder.Property(u => u.AccountRole)
             .IsRequired()
             .HasConversion<string>()
-            .HasMaxLength(20);
+            .HasMaxLength(20)
+            .HasDefaultValue(AccountRole.User);
 
         builder.Property(u => u.LastLoginAt)
             .HasColumnType("timestamp with time zone");
