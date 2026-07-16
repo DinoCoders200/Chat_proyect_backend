@@ -26,26 +26,37 @@ public class ApplicationDbContext: DbContext
         
         foreach (var entityType in builder.Model.GetEntityTypes())
         {
-            if (!typeof(IAuditableEntity).IsAssignableFrom(entityType.ClrType)) continue;
-            builder.Entity(entityType.ClrType)
-                .Property(nameof(IAuditableEntity.CreatedAt))
-                .HasColumnType("timestamp with time zone")
-                .IsRequired();
+            if (typeof(ICreatableEntity).IsAssignableFrom(entityType.ClrType))
+            {
+                builder.Entity(entityType.ClrType)
+                    .Property(nameof(ICreatableEntity.CreatedAt))
+                    .HasColumnType("timestamp with time zone")
+                    .IsRequired();
 
-            builder.Entity(entityType.ClrType)
-                .Property(nameof(IAuditableEntity.CreatedBy))
-                .HasMaxLength(256)
-                .IsRequired(false);
+                builder.Entity(entityType.ClrType)
+                    .Property(nameof(ICreatableEntity.CreatedBy))
+                    .IsRequired(false);
+            }
 
-            builder.Entity(entityType.ClrType)
-                .Property(nameof(IAuditableEntity.UpdatedAt))
-                .HasColumnType("timestamp with time zone")
-                .IsRequired(false);
+            if (typeof(IAuditableEntity).IsAssignableFrom(entityType.ClrType))
+            {
+                builder.Entity(entityType.ClrType)
+                    .Property(nameof(IAuditableEntity.UpdatedAt))
+                    .HasColumnType("timestamp with time zone")
+                    .IsRequired(false);
 
-            builder.Entity(entityType.ClrType)
-                .Property(nameof(IAuditableEntity.UpdatedBy))
-                .HasMaxLength(256)
-                .IsRequired(false);
+                builder.Entity(entityType.ClrType)
+                    .Property(nameof(IAuditableEntity.UpdatedBy))
+                    .IsRequired(false);
+            }
+
+            if (typeof(ISoftDeletable).IsAssignableFrom(entityType.ClrType))
+            {
+                builder.Entity(entityType.ClrType)
+                    .Property(nameof(ISoftDeletable.DeletedAt))
+                    .HasColumnType("timestamp with time zone")
+                    .IsRequired(false);
+            }
         }
     }
     
@@ -55,17 +66,21 @@ public class ApplicationDbContext: DbContext
         return base.SaveChangesAsync(cancellationToken);
     }
     
+    private Guid? GetCurrentUserId()
+    {
+        var claim = _httpContextAccessor.HttpContext?.User?
+            .FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        return Guid.TryParse(claim, out var userId) ? userId : null;
+    }
+
     private void OnBeforeSaving()
     {
-        var currentUserId = _httpContextAccessor.HttpContext?.User?
-            .FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "Self-Registration";
+        var currentUserId = GetCurrentUserId();
+        var now = DateTime.UtcNow;
 
-        var entries = ChangeTracker.Entries<IAuditableEntity>();
-
-        foreach (var entry in entries)
+        foreach (var entry in ChangeTracker.Entries<ICreatableEntity>())
         {
-            var now = DateTime.UtcNow;
-
             switch (entry.State)
             {
                 case EntityState.Added:
@@ -75,10 +90,16 @@ public class ApplicationDbContext: DbContext
                 case EntityState.Modified:
                     entry.Property(x => x.CreatedAt).IsModified = false;
                     entry.Property(x => x.CreatedBy).IsModified = false;
-                    entry.Entity.UpdatedAt = now;
-                    entry.Entity.UpdatedBy = currentUserId;
                     break;
             }
+        }
+
+        foreach (var entry in ChangeTracker.Entries<IAuditableEntity>())
+        {
+            if (entry.State != EntityState.Modified) continue;
+
+            entry.Entity.UpdatedAt = now;
+            entry.Entity.UpdatedBy = currentUserId;
         }
     }
 }
