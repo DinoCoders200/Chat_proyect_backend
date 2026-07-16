@@ -6,7 +6,7 @@ name: Build and deploy ASP.Net Core app to Azure Web App - Chat-backend
 on:
   push:
     branches:
-      - dev
+      - Dev
   workflow_dispatch:
 
 jobs:
@@ -23,9 +23,22 @@ jobs:
         with:
           dotnet-version: '10.x'
 
+      # 1. Compilar la aplicación primero
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
+      # 2. 💡 INSTALAR HERRAMIENTA EF (Faltaba este paso)
+      - name: Install dotnet-ef tool
+        run: dotnet tool install --global dotnet-ef
+
+      # 3. 🐘 APLICAR MIGRACIONES (Movido aquí por seguridad)
+      - name: Apply Migrations to Neon DB
+        env:
+          ConnectionStrings__DefaultConnection: ${{ secrets.CONNECTION_STRING_PROD }}
+        run: |
+          dotnet ef database update --configuration Release -- --connection-string-parameter "Pooling=false"
+
+      # 4. Publicar y empaquetar si la migración fue exitosa
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
@@ -51,9 +64,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_232F418A987C49A8B559BF2DD6BEF346 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_B3063C50CDF34A6D93CD9A0E65086118 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_B6A10BB1BA7F443DA1ED8D127621C759 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_E1FF8B1BE74A4A9E93DD674EE711A14F }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_64E991F4493E420D9B434789D2AB8114 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_C3CB61FAFFD1449F8017AE11C508C5C9 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -62,4 +75,3 @@ jobs:
           app-name: 'Chat-backend'
           slot-name: 'Production'
           package: .
-          
