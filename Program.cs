@@ -8,6 +8,7 @@ using FastEndpoints;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,10 +44,22 @@ builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(EfRepository<>));
 builder.Services.AddScoped<IExternalAuthProviderStrategy, DiscordAuthStrategy>();
 builder.Services.AddScoped<IExternalAuthService, ExternalAuthService>();
 builder.Services.AddScoped<AuthProviderFactory>();
+builder.Host.UseSerilog((context, services, configuration) => configuration
+    .ReadFrom.Configuration(context.Configuration)
+    .ReadFrom.Services(services)
+    .Enrich.FromLogContext()
+    .WriteTo.Console(new Serilog.Templates.ExpressionTemplate(
+        "[{@t:yyyy-MM-dd HH:mm:ss.fff} {@l:u3}] {@m} [ID: {CorrelationId}]\n{@x}"
+    ))
+);
 var app = builder.Build();
 
 app.MapHealthChecks("/healthz");
+app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseMiddleware<DatabaseExceptionMiddleware>();
+app.UseMiddleware<CorrelationIdMiddleware>();
+app.UseSerilogRequestLogging();
+
 app.MapOpenApi();            
 app.MapScalarApiReference();
 app.UseFastEndpoints(c =>

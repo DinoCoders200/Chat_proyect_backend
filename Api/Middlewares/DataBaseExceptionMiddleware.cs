@@ -1,5 +1,6 @@
 using FastEndpoints; 
 using System.Text.Json;
+using Serilog.Context;
 
 namespace custom_chat_backend.Api.Middlewares
 {
@@ -7,6 +8,8 @@ namespace custom_chat_backend.Api.Middlewares
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<DatabaseExceptionMiddleware> _logger;
+        private const string CorrelationIdHeaderName = "x-correlation-id";
+        
 
         public DatabaseExceptionMiddleware(RequestDelegate next, ILogger<DatabaseExceptionMiddleware> logger)
         {
@@ -22,8 +25,14 @@ namespace custom_chat_backend.Api.Middlewares
             }
             catch (Exception ex) when (IsDatabaseError(ex))
             {
-                _logger.LogCritical(ex, "Error crítico de conexión con la base de datos (PostgreSQL).");
-                await HandleDatabaseExceptionAsync(httpContext);
+                string correlationId = httpContext.Response.Headers[CorrelationIdHeaderName].ToString();
+
+                using (LogContext.PushProperty("CorrelationId", correlationId))
+                {
+                    _logger.LogCritical(ex, "Error crítico de conexión con la base de datos (PostgreSQL).");
+                }
+    
+                await HandleDatabaseExceptionAsync(httpContext, correlationId);
             }
         }
 
@@ -35,7 +44,7 @@ namespace custom_chat_backend.Api.Middlewares
                    fullExceptionText.Contains("RelationalConnection");
         }
 
-        private static Task HandleDatabaseExceptionAsync(HttpContext context)
+        private static Task HandleDatabaseExceptionAsync(HttpContext context, string correlationId)
         {
             context.Response.ContentType = "application/json";
             
@@ -43,8 +52,10 @@ namespace custom_chat_backend.Api.Middlewares
             context.Response.StatusCode = statusCode;
 
             var problem = new ProblemDetails(
-                failures: new List<FluentValidation.Results.ValidationFailure>(), // Lista vacía (no es error de validación)
-                statusCode: statusCode)
+                new List<FluentValidation.Results.ValidationFailure>(),
+                "https://tools.ietf.org/html/rfc7231",
+                correlationId,
+                 statusCode)
             {
                 Instance = context.Request.Path,
                 Detail = "ERROR_PERSISTENCE_CONNECTION",

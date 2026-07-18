@@ -45,16 +45,16 @@ public static class ResultExtensions
         var title = GetTitleForStatus(result.Status);
         var detail = result.Errors.FirstOrDefault() ?? "An error occurred while processing your request.";
         
+        string correlationId = httpContext.Response.Headers["x-correlation-id"].ToString();
         var problem = new ProblemDetails(
             endpoint.ValidationFailures, 
-            "https://tools.ietf.org/html/rfc7231", 
-            title, 
+            "https://tools.ietf.org/html/rfc7231",
+            correlationId, 
             statusCode)
         {
             Instance = httpContext.Request.Path,
-            Detail = detail 
+            Detail = detail
         };
-        
         await httpContext.Response.SendAsync(problem, statusCode, cancellation: ct);
     }
 
