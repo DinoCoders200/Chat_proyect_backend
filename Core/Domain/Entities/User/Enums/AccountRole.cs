@@ -1,4 +1,4 @@
-namespace custom_chat_backend.Core.Domain.Enums;
+namespace custom_chat_backend.Core.Domain.Entities.User.Enums;
 
 public enum AccountRole
 {

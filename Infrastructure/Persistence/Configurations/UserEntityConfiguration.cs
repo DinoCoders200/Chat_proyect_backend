@@ -1,5 +1,5 @@
 using custom_chat_backend.Core.Domain.Entities.User;
-using custom_chat_backend.Core.Domain.Enums;
+using custom_chat_backend.Core.Domain.Entities.User.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

@@ -1,5 +1,5 @@
 using custom_chat_backend.Core.Domain.Entities.Common;
-using custom_chat_backend.Core.Domain.Enums;
+using custom_chat_backend.Core.Domain.Entities.User.Enums;
 
 namespace custom_chat_backend.Core.Domain.Entities.User;
 
