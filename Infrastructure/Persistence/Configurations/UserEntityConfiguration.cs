@@ -1,4 +1,5 @@
 using custom_chat_backend.Core.Domain.Entities.User;
+using custom_chat_backend.Core.Domain.Entities.User.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,16 +11,43 @@ public class UserEntityConfiguration:IEntityTypeConfiguration<UserEntity>
     {
         builder.ToTable("Users");
         builder.HasKey(x => x.Id);
-        
+
         builder.Property(u => u.Username)
             .IsRequired()
             .HasMaxLength(50);
-        
+
         builder.HasIndex(u => u.Username)
             .IsUnique();
-        
-        builder.Property(u => u.Password)
+
+        builder.Property(u => u.Email)
             .IsRequired()
             .HasMaxLength(255);
+
+        builder.HasIndex(u => u.Email)
+            .IsUnique();
+
+        builder.Property(u => u.EmailVerified)
+            .IsRequired()
+            .HasDefaultValue(false);
+
+        // Null for accounts that only authenticate through an external provider.
+        builder.Property(u => u.Password)
+            .IsRequired(false)
+            .HasMaxLength(255);
+
+        builder.Property(u => u.Status)
+            .IsRequired()
+            .HasConversion<string>()
+            .HasMaxLength(20)
+            .HasDefaultValue(UserStatus.Active);
+
+        builder.Property(u => u.AccountRole)
+            .IsRequired()
+            .HasConversion<string>()
+            .HasMaxLength(20)
+            .HasDefaultValue(AccountRole.User);
+
+        builder.Property(u => u.LastLoginAt)
+            .HasColumnType("timestamp with time zone");
     }
 }

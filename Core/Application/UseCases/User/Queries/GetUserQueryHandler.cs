@@ -17,6 +17,6 @@ public class GetUserQueryHandler(IRepositoryBase<UserEntity> userRepository):IRe
 
         if (res == null) return Result.NotFound("User not found");
 
-        return new GetUserOutput(res.Username, res.Password);
+        return new GetUserOutput(res.Username, res.Password ?? string.Empty);
     }
 }
