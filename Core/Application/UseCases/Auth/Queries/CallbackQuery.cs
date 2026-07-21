@@ -5,4 +5,4 @@ using MediatR;
 
 namespace custom_chat_backend.Core.Application.UseCases.Auth.Queries;
 
-public record CallbackQuery(GetLoginCallbackInput Input):IRequest<Result<GetLoginCallbackOutput>>;
+public record CallbackQuery(GetLoginCallbackInput Input):IRequest<Result<OAuthLoginOutput>>;

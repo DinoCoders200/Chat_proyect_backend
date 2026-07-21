@@ -11,8 +11,8 @@ public static class CallbackProviderMapper
         return new GetLoginCallbackInput(req.ProviderName,claims);
     }
 
-    public static CallbackProviderResponse ToResponse(this GetLoginCallbackOutput output)
+    public static CallbackProviderResponse ToResponse(this OAuthLoginOutput output)
     {
-        return new CallbackProviderResponse(output.ProviderName,output.Email);
+        return new CallbackProviderResponse(output.AccessToken,output.RefreshToken);
     }
 }
